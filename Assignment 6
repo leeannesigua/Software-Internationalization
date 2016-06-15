@@ -1,0 +1,141 @@
+Imports System
+Imports System.Globalization
+Imports System.Threading
+
+Public Class Form1
+
+    Inherits System.Windows.Forms.Form
+
+    Dim currentCulture As CultureInfo
+
+    Dim usaCulture As CultureInfo = New CultureInfo("en-US")
+    Dim argentinaCulture As CultureInfo = New CultureInfo("es-AR")
+    Dim indiaCulture As CultureInfo = New CultureInfo("hi-In")
+    Dim disneylandCulture As CultureInfo = New CultureInfo("")
+
+    Dim dateTime As DateTime = New DateTime(0)
+    Dim midJanTime As DateTime = New DateTime(2016, 01, 01, 0, 0, 0)
+    Dim prevTaco As Integer = 63417
+    Dim tacoPrice As Double = 4.29
+    Dim currentTaco As Integer = 63417
+    Dim tacoMin As Integer = 600
+    Dim rev As Double = 0
+
+    Dim displayMode As String
+
+    Dim arabic_digits As Char() = {"۰"c, "١"c, "٢"c, "٣"c, "٤"c, "٥"c, "٦"c, "٧"c, "٨"c, "٩"c}
+    Dim hindi_digits As Char() = {"०"c, "१"c, "२"c, "३"c, "४"c, "५"c, "६"c, "७"c, "८"c, "९"c}
+    Dim latin_digits As Char() = {"0"c, "1"c, "2"c, "3"c, "4"c, "5"c, "6"c, "7"c, "8"c, "9"c}
+    Dim arabic_digits_enabled As Boolean
+    Dim hindi_digits_enabled As Boolean
+    Dim latin_digits_enabled As Boolean
+    Dim latin_India_currency_symbol As String
+    Dim hindi_India_currency_symbol As String
+
+    Private Sub xlt_digits_to_H(ByRef latin As String)
+        Dim i As Integer
+        For i = 0 To 9
+            latin = latin.Replace(latin_digits(i), hindi_digits(i))
+        Next i
+    End Sub
+
+
+
+    Private Sub defineDisneylandCulture()
+        Dim disneyCurrencyGroupSizes As Integer() = {3}
+        Dim disneyNumberGroupSizes As Integer() = {4, 3}
+        disneylandCulture.NumberFormat.CurrencyDecimalDigits = 2
+        disneylandCulture.NumberFormat.CurrencyDecimalSeparator = "."
+        disneylandCulture.NumberFormat.CurrencyGroupSizes = disneyCurrencyGroupSizes
+        disneylandCulture.NumberFormat.CurrencyGroupSeparator = ","
+        disneylandCulture.NumberFormat.CurrencySymbol = "ஜ"
+        disneylandCulture.NumberFormat.CurrencyPositivePattern = 3
+        disneylandCulture.NumberFormat.NumberDecimalDigits = 0
+        disneylandCulture.NumberFormat.NumberDecimalSeparator = "*"
+        disneylandCulture.NumberFormat.NumberGroupSizes = disneyNumberGroupSizes
+        disneylandCulture.NumberFormat.NumberGroupSeparator = "*"
+        disneylandCulture.DateTimeFormat.FullDateTimePattern = "yyyy:MM:dd mm:HH:ss"
+    End Sub
+
+    Private Sub initializeDualIndiaCulture()
+        hindi_India_currency_symbol = indiaCulture.NumberFormat.CurrencySymbol
+        latin_India_currency_symbol = "Rs"
+        'latin_digits_enabled = True
+        'hindi_digits_enabled = True
+        indiaCulture.NumberFormat.CurrencySymbol = latin_India_currency_symbol
+        usaCulture.NumberFormat.NumberDecimalDigits = 0
+        indiaCulture.NumberFormat.NumberDecimalDigits = 0
+        argentinaCulture.NumberFormat.NumberDecimalDigits = 0
+    End Sub
+
+    Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        displayMode = "N"
+        currentCulture = usaCulture
+        defineDisneyLandCulture()
+        initializeDualIndiaCulture()
+        usaCulture.NumberFormat.NumberDecimalDigits = 0
+    End Sub
+
+    Private Sub myRefresh()
+        Dim i As Integer
+        Thread.CurrentThread.CurrentUICulture = currentCulture
+        labelDisplay.Text = CDbl(currentTaco).ToString("N", currentCulture)
+        labelRevDisplay.Text = CDbl(rev).ToString("C", currentCulture)
+        If hindi_digits_enabled Then
+            xlt_digits_to_H(labelDisplay.Text)
+            xlt_digits_to_H(labelDateTime.Text)
+            xlt_digits_to_H(labelRevDisplay.Text)
+        End If
+    End Sub
+
+    Private Sub picboxAmericanFlag_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles picboxAmericanFlag.Click
+        currentCulture = usaCulture
+
+        hindi_digits_enabled = False
+        latin_digits_enabled = True
+        myRefresh()
+    End Sub
+
+    Private Sub picboxIndiaFlag_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles picboxIndiaFlag.Click
+        currentCulture = indiaCulture
+        indiaCulture.NumberFormat.CurrencySymbol = hindi_India_currency_symbol
+        hindi_digits_enabled = True
+        latin_digits_enabled = False
+
+        myRefresh()
+    End Sub
+
+    Private Sub picboxDisneyFlag_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles picboxDisneyFlag.Click
+        currentCulture = disneylandCulture
+        hindi_digits_enabled = False
+        latin_digits_enabled = True
+        myRefresh()
+    End Sub
+
+    Private Sub picboxArgentinaFlag_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles picboxArgentinaFlag.Click
+        currentCulture = argentinaCulture
+
+        arabic_digits_enabled = False
+        hindi_digits_enabled = False
+        latin_digits_enabled = True
+        myRefresh()
+    End Sub
+
+    Private Sub asNumberButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        displayMode = "N"
+        myRefresh()
+    End Sub
+
+    Private Sub asCurrencyButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        displayMode = "C"
+        myRefresh()
+    End Sub
+
+    Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
+        labelDateTime.Text = DateTime.Now().ToString("F", currentCulture)
+        Dim duration As TimeSpan = DateTime.Now - midJanTime
+        currentTaco = (Math.Floor(duration.TotalMinutes) * tacoMin) + prevTaco
+        rev = currentTaco * tacoPrice
+        myRefresh()
+    End Sub
+End Class
