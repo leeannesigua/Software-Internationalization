@@ -1,0 +1,23 @@
+Public Class Form1
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        labelGreeting.Text = "Good Day"
+        buttonExit.Text = "Exit"
+
+    End Sub
+
+    Private Sub buttonExit_Click(sender As Object, e As EventArgs) Handles buttonExit.Click
+        End
+    End Sub
+
+    Private Sub picboxArgentinaFlag_Click(sender As Object, e As EventArgs) Handles picboxArgentinaFlag.Click
+        labelGreeting.Text = "¡Buenos Días!"
+        buttonExit.Text = "Salir"
+
+    End Sub
+
+    Private Sub picboxAmericanFlag_Click(sender As Object, e As EventArgs) Handles picboxAmericanFlag.Click
+        labelGreeting.Text = "Good Day!"
+        buttonExit.Text = "Exit"
+    End Sub
+End Class
