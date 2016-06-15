@@ -1,0 +1,39 @@
+Imports System.Globalization
+Imports System.Threading
+Public Class Form1
+    Dim usaInfo As CultureInfo = New CultureInfo("en-US")
+    Dim argentinaInfo As CultureInfo = New CultureInfo("es-AR")
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        'labelGreeting.Text = "Good Day"
+        'buttonExit.Text = "Exit"
+
+    End Sub
+
+    Private Sub buttonExit_Click(sender As Object, e As EventArgs) Handles buttonExit.Click
+        End
+    End Sub
+
+    Private Sub picboxArgentinaFlag_Click(sender As Object, e As EventArgs) Handles picboxArgentinaFlag.Click
+        Thread.CurrentThread.CurrentUICulture = argentinaInfo
+        ReInit()
+        'labelGreeting.Text = "¡Buenos Días!"
+        'buttonExit.Text = "Salir"
+
+    End Sub
+
+    Private Sub picboxAmericanFlag_Click(sender As Object, e As EventArgs) Handles picboxAmericanFlag.Click
+        Thread.CurrentThread.CurrentUICulture = usaInfo
+        ReInit()
+        'labelGreeting.Text = "Good Day!"
+        'buttonExit.Text = "Exit"
+    End Sub
+
+    Private Sub ReInit()
+        Dim myResources As System.Resources.ResourceManager = New System.Resources.ResourceManager(GetType(Form1))
+        Me.buttonExit.Text = myResources.GetString("buttonExit.Text")
+        Me.labelGreeting.Text = myResources.GetString("labelGreeting.Text")
+    End Sub
+
+
+End Class
