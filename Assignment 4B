@@ -1,0 +1,34 @@
+Imports System
+Imports System.Resources
+Imports System.Drawing
+Imports System.IO
+
+Public Class Form1
+    Dim resx_cur As ResXResourceSet
+    Dim resx_usa As ResXResourceSet = New ResXResourceSet("resx_usa.resx")
+    Dim resx_argentina As ResXResourceSet = New ResXResourceSet("resx_argentina.resx")
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    End Sub
+
+    Private Sub buttonExit_Click(sender As Object, e As EventArgs) Handles buttonExit.Click
+        End
+    End Sub
+
+    Private Sub picboxAmericanFlag_Click(sender As Object, e As EventArgs) Handles picboxAmericanFlag.Click
+        resx_cur = resx_usa
+        refreshLocalizableContent()
+    End Sub
+
+    Private Sub picboxArgentinaFlag_Click(sender As Object, e As EventArgs) Handles picboxArgentinaFlag.Click
+        resx_cur = resx_argentina
+        refreshLocalizableContent()
+    End Sub
+
+    Private Sub refreshLocalizableContent()
+        labelGreeting.Text = resx_cur.GetString("greeting")
+        buttonExit.Text = resx_cur.GetString("exit_message")
+        picboxIconicImage.Image = resx_cur.GetObject("imagepath", True)
+    End Sub
+
+End Class
